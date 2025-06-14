@@ -43,6 +43,9 @@
         - card.tsx
         - slider.tsx
   - public/
+    - favicon.svg
+    - _redirects
+    - ...
   - package.json
   - package-lock.json
   - README.md
@@ -53,4 +56,11 @@
   - tsconfig.json
   - netlify.toml
   - eslint.config.mjs
-  - components.json 
+  - components.json
+  - .eslintignore
+- Added a bold, centered red 'p' favicon (favicon.svg) to public/ for app branding.
+- Cleaned up all ESLint errors in source code; added .eslintignore to exclude .next from linting.
+- Removed all unused props, variables, and functions (including scrollable, marker refs, and marker drag logic) from WaveSurferComponent and page.tsx.
+- Fixed useEffect dependency warnings in page.tsx.
+- Confirmed type safety with `npx tsc --noEmit` (no errors).
+- Committed and pushed all changes to GitHub for Netlify redeploy. 

@@ -17,4 +17,10 @@
 - Merged Play and Pause buttons into a single toggle button.
 - Improved error handling for AbortError in WaveSurferComponent.
 - Explained and optionally suppressed AbortError globally.
-- Noted recurring AbortError issue when loading new video/audio. 
+- Noted recurring AbortError issue when loading new video/audio.
+- Created and added a bold, centered red 'p' favicon (favicon.svg) to public/.
+- Cleaned up all ESLint errors and warnings in source code; added .eslintignore for .next.
+- Removed unused props, variables, and marker drag logic from WaveSurferComponent and page.tsx.
+- Fixed useEffect dependency warnings in page.tsx.
+- Confirmed type safety with `npx tsc --noEmit`.
+- Committed and pushed all changes for Netlify redeploy. 
