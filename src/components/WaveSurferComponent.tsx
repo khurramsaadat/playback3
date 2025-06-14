@@ -9,9 +9,6 @@ interface WaveSurferComponentProps {
   abMarkers: { a: number; b: number };
   setAbMarkers: (markers: { a: number; b: number }) => void;
   videoRef: MutableRefObject<HTMLVideoElement | null>;
-  isLooping: boolean;
-  repeatCount: number;
-  setIsLooping: (v: boolean) => void;
   draggableMarkers?: boolean;
   scrollable?: boolean;
   onDuration?: (duration: number) => void;
@@ -26,9 +23,6 @@ export default function WaveSurferComponent({
   abMarkers,
   setAbMarkers,
   videoRef,
-  isLooping,
-  repeatCount,
-  setIsLooping,
   draggableMarkers = false,
   scrollable = false,
   onDuration,
@@ -99,7 +93,7 @@ export default function WaveSurferComponent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioUrl]);
 
-  // Update region when abMarkers change
+  // Update region and marker positions when abMarkers change
   useEffect(() => {
     if (!wsRef.current) return;
     const regionsPlugin = wsRef.current.getActivePlugins().find((p) => (p as { addRegion?: unknown }).addRegion);
@@ -118,6 +112,8 @@ export default function WaveSurferComponent({
       resize: false,
       id: 'ab-region',
     });
+    // Force re-render by updating state (if needed)
+    // setCurrentTime(wsRef.current.getCurrentTime() || 0);
   }, [abMarkers.a, abMarkers.b]);
 
   // Sync video and waveform
@@ -134,33 +130,6 @@ export default function WaveSurferComponent({
       video.removeEventListener("timeupdate", onTimeUpdate);
     };
   }, [videoRef, audioUrl]);
-
-  // Loop logic
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!isLooping || !video) return;
-    loopCountRef.current = 0;
-    const onTimeUpdate = () => {
-      if (!video) return;
-      const current = video.currentTime;
-      if (current > abMarkers.b) {
-        loopCountRef.current += 1;
-        if (loopCountRef.current < repeatCount) {
-          video.currentTime = abMarkers.a;
-          video.play();
-        } else {
-          setIsLooping(false);
-        }
-      }
-    };
-    video.addEventListener("timeupdate", onTimeUpdate);
-    video.currentTime = abMarkers.a;
-    video.play();
-    return () => {
-      video.removeEventListener("timeupdate", onTimeUpdate);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLooping, abMarkers, repeatCount]);
 
   // Drag marker logic
   const handleMarkerDrag = (type: "a" | "b") => {
@@ -188,7 +157,7 @@ export default function WaveSurferComponent({
     window.addEventListener("touchend", onUp);
   };
 
-  // Marker positions
+  // Markers snap to the exact time selected by the user (no rounding or peak snapping)
   const getMarkerLeft = (time: number) => {
     if (!wsRef.current) return "0%";
     const duration = wsRef.current.getDuration();
@@ -217,6 +186,13 @@ export default function WaveSurferComponent({
   // Helper to check if current time is near marker
   const isAtA = Math.abs(currentTime - abMarkers.a) < 0.2;
   const isAtB = Math.abs(currentTime - abMarkers.b) < 0.2;
+
+  // Helper to format seconds as mm:ss
+  function formatTime(s: number) {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  }
 
   return (
     <div className={`w-full flex flex-col items-center gap-2 ${scrollable ? "overflow-x-auto" : ""}`}
@@ -253,21 +229,21 @@ export default function WaveSurferComponent({
         )}
       </div>
       {/* Marker set buttons */}
-      <div className="flex gap-2 w-full justify-between text-xs mt-1">
+      <div className="flex gap-2 w-full justify-between text-xs mt-1 items-center">
         <button
           className={`px-2 py-1 rounded ${isAtA ? "bg-green-600 text-white" : "bg-gray-200 text-gray-700"} hover:bg-green-700`}
           onClick={() => setAbMarkers({ ...abMarkers, a: videoRef.current?.currentTime || 0 })}
         >
-          Set A ({abMarkers.a.toFixed(1)}s)
+          Set A
         </button>
+        <span className="flex items-center px-2 text-xs font-mono text-gray-600">{formatTime(abMarkers.a)} - {formatTime(abMarkers.b)}</span>
         <button
           className={`px-2 py-1 rounded ${isAtB ? "bg-green-700 text-white" : "bg-gray-200 text-gray-700"} hover:bg-green-700`}
           onClick={() => {
             setAbMarkers({ ...abMarkers, b: videoRef.current?.currentTime || 0 });
-            setIsLooping(true);
           }}
         >
-          Set B & Play ({abMarkers.b.toFixed(1)}s)
+          Set B
         </button>
       </div>
     </div>
