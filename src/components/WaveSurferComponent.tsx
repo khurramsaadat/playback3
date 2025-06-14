@@ -122,40 +122,42 @@ export default function WaveSurferComponent({
 
   // Sync video and waveform
   useEffect(() => {
-    if (!videoRef.current || !wsRef.current) return;
+    const video = videoRef.current;
+    if (!video || !wsRef.current) return;
     const onTimeUpdate = () => {
-      if (!videoRef.current || !wsRef.current) return;
-      const time = videoRef.current.currentTime;
+      if (!video || !wsRef.current) return;
+      const time = video.currentTime;
       wsRef.current.seekTo(time / (wsRef.current.getDuration() || 1));
     };
-    videoRef.current.addEventListener("timeupdate", onTimeUpdate);
+    video.addEventListener("timeupdate", onTimeUpdate);
     return () => {
-      videoRef.current?.removeEventListener("timeupdate", onTimeUpdate);
+      video.removeEventListener("timeupdate", onTimeUpdate);
     };
   }, [videoRef, audioUrl]);
 
   // Loop logic
   useEffect(() => {
-    if (!isLooping || !videoRef.current) return;
+    const video = videoRef.current;
+    if (!isLooping || !video) return;
     loopCountRef.current = 0;
     const onTimeUpdate = () => {
-      if (!videoRef.current) return;
-      const current = videoRef.current.currentTime;
+      if (!video) return;
+      const current = video.currentTime;
       if (current > abMarkers.b) {
         loopCountRef.current += 1;
         if (loopCountRef.current < repeatCount) {
-          videoRef.current.currentTime = abMarkers.a;
-          videoRef.current.play();
+          video.currentTime = abMarkers.a;
+          video.play();
         } else {
           setIsLooping(false);
         }
       }
     };
-    videoRef.current.addEventListener("timeupdate", onTimeUpdate);
-    videoRef.current.currentTime = abMarkers.a;
-    videoRef.current.play();
+    video.addEventListener("timeupdate", onTimeUpdate);
+    video.currentTime = abMarkers.a;
+    video.play();
     return () => {
-      videoRef.current?.removeEventListener("timeupdate", onTimeUpdate);
+      video.removeEventListener("timeupdate", onTimeUpdate);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLooping, abMarkers, repeatCount]);

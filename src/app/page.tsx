@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import type { ComponentType } from "react";
-import { PlayIcon, PauseIcon, StopIcon, BackwardIcon, ForwardIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, PauseIcon, BackwardIcon, ForwardIcon } from '@heroicons/react/24/solid';
 import type { WaveSurferComponentProps } from "../components/WaveSurferComponent";
 
 const WaveSurferComponent = dynamic(() =>
