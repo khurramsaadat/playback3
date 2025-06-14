@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import type { MutableRefObject } from "react";
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
+import { Slider } from "./ui/slider";
+import { Button } from "./ui/button";
 
 interface WaveSurferComponentProps {
   audioUrl: string | null;
@@ -14,6 +16,7 @@ interface WaveSurferComponentProps {
   onDuration?: (duration: number) => void;
   centerOnAB?: boolean;
   onCenterHandled?: () => void;
+  zoom: number;
 }
 
 export type { WaveSurferComponentProps };
@@ -28,6 +31,7 @@ export default function WaveSurferComponent({
   onDuration,
   centerOnAB = false,
   onCenterHandled,
+  zoom,
 }: WaveSurferComponentProps) {
   const waveRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WaveSurfer | null>(null);
@@ -57,15 +61,16 @@ export default function WaveSurferComponent({
       barGap: 2,
       cursorColor: "#15803d",
       interact: true,
-      minPxPerSec: 40,
+      minPxPerSec: 40 * zoom,
     });
     // Register regions plugin and set region
     const regionsPlugin = RegionsPlugin.create();
     wsRef.current.registerPlugin(regionsPlugin);
     wsRef.current.load(audioUrl);
     wsRef.current.on("ready", () => {
-      setAbMarkers({ a: 0, b: wsRef.current?.getDuration() || 0 });
       if (onDuration && wsRef.current) onDuration(wsRef.current.getDuration());
+      // Only reset abMarkers if this is a new audioUrl (not just a zoom change)
+      // Optionally, you can check if abMarkers.a === 0 && abMarkers.b === 0 to avoid overwriting user markers
     });
     // @ts-expect-error: 'seek' is a valid event in wavesurfer.js
     wsRef.current.on("seek", (progress: number) => {
@@ -90,7 +95,7 @@ export default function WaveSurferComponent({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioUrl]);
+  }, [audioUrl, zoom]);
 
   // Update region and marker positions when abMarkers change
   useEffect(() => {
@@ -194,39 +199,8 @@ export default function WaveSurferComponent({
   }
 
   return (
-    <div className={`w-full flex flex-col items-center gap-2 ${scrollable ? "overflow-x-auto" : ""}`}
-         style={scrollable ? { WebkitOverflowScrolling: "touch", height: "8rem", justifyContent: "center" } : { height: "8rem", justifyContent: "center" }}>
-      <div ref={waveRef} className="w-full h-full bg-muted rounded relative flex items-center justify-center">
-        {/* Markers */}
-        {wsRef.current && (
-          <>
-            {/* Marker A */}
-            <div
-              ref={markerARef}
-              className="absolute top-0 h-full w-4 flex flex-col items-center justify-center z-10"
-              style={{ left: getMarkerLeft(abMarkers.a), transform: "translateX(-50%)" }}
-              onMouseDown={draggableMarkers ? () => handleMarkerDrag("a") : undefined}
-              onTouchStart={draggableMarkers ? () => handleMarkerDrag("a") : undefined}
-            >
-              <div className="w-3 h-16 bg-green-600 rounded shadow-lg border-2 border-white flex items-center justify-center">
-                <span className="text-xs font-bold text-white select-none">A</span>
-              </div>
-            </div>
-            {/* Marker B */}
-            <div
-              ref={markerBRef}
-              className="absolute top-0 h-full w-4 flex flex-col items-center justify-center z-10"
-              style={{ left: getMarkerLeft(abMarkers.b), transform: "translateX(-50%)" }}
-              onMouseDown={draggableMarkers ? () => handleMarkerDrag("b") : undefined}
-              onTouchStart={draggableMarkers ? () => handleMarkerDrag("b") : undefined}
-            >
-              <div className="w-3 h-16 bg-green-700 rounded shadow-lg border-2 border-white flex items-center justify-center">
-                <span className="text-xs font-bold text-white select-none">B</span>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+    <div className="w-full flex flex-col items-center gap-2" style={{ height: '14rem', justifyContent: 'center' }}>
+      <div ref={waveRef} className="w-full h-full bg-muted rounded relative flex items-center justify-center" />
       {/* Marker set buttons */}
       <div className="flex gap-2 w-full justify-between text-xs mt-1 items-center">
         <button
