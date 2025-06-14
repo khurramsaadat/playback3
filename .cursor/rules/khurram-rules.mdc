@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Your rule content
+- When I set agent to AUTO, in your reply mention the agent's name/LLM that was used for reply the code/answers.
+- DATES AND VERSIONS:
+  - ALWAYS check @web for current date before any date-related operations
+  - NEVER assume or use hardcoded dates
+  - Use web search to verify versions and dates
+  - All changelogs and documentation must use verified current dates
+  - Format dates consistently as YYYY-MM-DD
+- I am using windows 11 and my IDE is a Cursor AI.
+- use playwright MCP server, it is added in the settings/mcp servers.
+- Create a folder on root - name it DOCS and make these files in it: PROGRESS.md, CHANGELOG.md and INPUTS.md
+- update CHANGELOG.md with each session's changes, including dates, specific changes and any important notes, track all modifications, document any configuration changes and keep a record of all commands used. Also make and maintain directory and file structure in it.
+- Document any recurring issues and their solutions in CHANGELOG.md
+- Make README.md if missing and populate it with the nesessory information. Avoid giving personal/private info.
+- PROGRESS.md for reporting each progress in it.
+- INPUTS.md log of all of my inputs with time and date stamp for my records.
+- Always remember my inputs and remind me if i make a mistake. Do not always agree with me and counter suggest a better way for the good of code developement. 
+- Always read and understand @khurram-rules.mdc file.
+- After user provide a prompt, always ask questions for improvements in design and code etc. (check internet for best practice) and never proceed without it. 
+- Do not make any changes, until you have 95% confidence that you know what to build, ask me follow up questions and clarifying questions that you have until you are confident that you know what to build.
+- Always check the whole code before replying and adding codes. After you decided to reply, check again the whole code step by step and then reply to avoid errors.
+- Refer to the documents that I added in the Cursor Settings.
+- Write clean and effective code and use comments.
+- check the terminal and problem tab for issues and suggest solution.
+- Always check Problems in the Cursor terminal first before making any changes or suggestions.
+- read console errors and suggest fixes.
+- Always read entire code base.
+- use pexels.com to get free images if needed.
+- Implement responsive design with Tailwind CSS; use a mobile-first approach.
+- Follow Next.js docs for Data Fetching, Rendering, and Routing.
+ Address all TypeScript errors, ESLint warnings, and other issues shown in the Problems tab
+- If there are multiple problems, prioritize them by severity and address them systematically:
+  1. Critical errors that prevent compilation/deployment
+  2. TypeScript type errors
+  3. ESLint errors
+  4. ESLint warnings
+  5. Code style issues
+- Explain any problems found and the proposed solutions before implementing them
+- For each error:
+  - Show the exact error message
+  - Explain the cause
+  - Propose a solution
+  - Get confirmation before implementing fixes
+- When adding new code, ensure it doesn't introduce new problems
+- After fixing errors, verify the fix by checking the Problems tab again
+- Before you writing any code read these rules and after that mention "understood Khurram's rules"
+- For configuration errors (like next.config.ts), address them before proceeding with feature work
+- Git is main not master.
+- When user mention "save" please update CHANGELOG.md, PROGRESS.md, INPUTS.md and include folder structure including files and push all codes and files to Git and GitHub.
+- Before pushing to GitHub (especially when using the "save" command), always run a full type check (npx tsc --noEmit). This is - enforced by a Husky pre-push hook. If any type errors are found, fix them before pushing.
+- Always use ; instead of && for chaining shell commands, especially in Windows environments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

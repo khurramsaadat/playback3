@@ -1,0 +1,14 @@
+# Netlify configuration for static Next.js export
+[build]
+  command = "npm run build"
+  publish = "out"
+
+# Redirect all requests to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Uncomment and edit below to add environment variables
+#[[context.production.environment]]
+#  NEXT_PUBLIC_API_URL = "https://api.example.com" 
