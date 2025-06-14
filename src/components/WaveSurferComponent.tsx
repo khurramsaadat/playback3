@@ -3,16 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import type { MutableRefObject } from "react";
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
-import { Slider } from "./ui/slider";
-import { Button } from "./ui/button";
 
 interface WaveSurferComponentProps {
   audioUrl: string | null;
   abMarkers: { a: number; b: number };
   setAbMarkers: (markers: { a: number; b: number }) => void;
   videoRef: MutableRefObject<HTMLVideoElement | null>;
-  draggableMarkers?: boolean;
-  scrollable?: boolean;
   onDuration?: (duration: number) => void;
   centerOnAB?: boolean;
   onCenterHandled?: () => void;
@@ -26,8 +22,6 @@ export default function WaveSurferComponent({
   abMarkers,
   setAbMarkers,
   videoRef,
-  draggableMarkers = false,
-  scrollable = false,
   onDuration,
   centerOnAB = false,
   onCenterHandled,
@@ -35,8 +29,6 @@ export default function WaveSurferComponent({
 }: WaveSurferComponentProps) {
   const waveRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WaveSurfer | null>(null);
-  const markerARef = useRef<HTMLDivElement>(null);
-  const markerBRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
@@ -134,39 +126,6 @@ export default function WaveSurferComponent({
       video.removeEventListener("timeupdate", onTimeUpdate);
     };
   }, [videoRef, audioUrl]);
-
-  // Drag marker logic
-  const handleMarkerDrag = (type: "a" | "b") => {
-    if (!wsRef.current) return;
-    const bounding = waveRef.current?.getBoundingClientRect();
-    if (!bounding) return;
-    const getX = (ev: TouchEvent | MouseEvent) => ("touches" in ev ? (ev as TouchEvent).touches[0].clientX : (ev as MouseEvent).clientX);
-    const duration = wsRef.current.getDuration();
-    const onMove = (ev: TouchEvent | MouseEvent) => {
-      const x = getX(ev) - bounding.left;
-      let percent = x / bounding.width;
-      percent = Math.max(0, Math.min(1, percent));
-      const time = percent * duration;
-      setAbMarkers({ ...abMarkers, [type]: time });
-    };
-    const onUp = () => {
-      window.removeEventListener("mousemove", onMove as EventListener);
-      window.removeEventListener("mouseup", onUp);
-      window.removeEventListener("touchmove", onMove as EventListener);
-      window.removeEventListener("touchend", onUp);
-    };
-    window.addEventListener("mousemove", onMove as EventListener);
-    window.addEventListener("mouseup", onUp);
-    window.addEventListener("touchmove", onMove as EventListener);
-    window.addEventListener("touchend", onUp);
-  };
-
-  // Markers snap to the exact time selected by the user (no rounding or peak snapping)
-  const getMarkerLeft = (time: number) => {
-    if (!wsRef.current) return "0%";
-    const duration = wsRef.current.getDuration();
-    return `${(time / duration) * 100}%`;
-  };
 
   // Center on A/B logic
   useEffect(() => {

@@ -77,13 +77,6 @@ export default function Home() {
     }
   };
 
-  // Helper to format seconds as mm:ss
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m}:${sec.toString().padStart(2, '0')}`;
-  };
-
   // Listen for play/pause events to update isPlaying
   useEffect(() => {
     const video = videoRef.current;
@@ -129,7 +122,7 @@ export default function Home() {
         loopingHandlerRef.current = null;
       }
     };
-  }, [abMarkers.a, abMarkers.b, videoRef, duration]);
+  }, [abMarkers, videoRef, duration]);
 
   // Ensure isPlaying state always matches the actual video state
   useEffect(() => {
@@ -192,8 +185,6 @@ export default function Home() {
               abMarkers={abMarkers}
               setAbMarkers={(markers: { a: number; b: number }) => setAbMarkers(markers)}
               videoRef={videoRef}
-              draggableMarkers
-              scrollable
               onDuration={(d: number) => setDuration(d)}
               centerOnAB={centerOnAB}
               onCenterHandled={() => setCenterOnAB(false)}
