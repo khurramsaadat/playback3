@@ -31,7 +31,6 @@ export default function WaveSurferComponent({
 }: WaveSurferComponentProps) {
   const waveRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WaveSurfer | null>(null);
-  const loopCountRef = useRef(0);
   const markerARef = useRef<HTMLDivElement>(null);
   const markerBRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
